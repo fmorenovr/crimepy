@@ -4,6 +4,7 @@ data/csv/
 .Rhistory
 Rplots.pdf
 *.pyc
+*.zip
 
 outputs/
 .ipynb_checkpoints/
