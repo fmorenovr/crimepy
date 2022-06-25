@@ -2,7 +2,7 @@ import time
 import os
 from crimebb.utils import verifyDir
 
-def cmd_db_restore(db_name, db_path, passwd=None, time_to_sleep=20):
+def cmd_db_restore(db_name, db_path, passwd=None, time_to_sleep=30):
   print(f"Backuping ... {db_name}")
   
   input_path=f"{os.getcwd()}/{db_path}/"
@@ -17,7 +17,7 @@ def cmd_db_restore(db_name, db_path, passwd=None, time_to_sleep=20):
   time.sleep(time_to_sleep)
   #os.system("")
 
-def cmd_table_to_csv(db_name, table_name, csv_path, passwd=None, time_to_sleep=20):
+def cmd_table_to_csv(db_name, table_name, csv_path, passwd=None, time_to_sleep=30):
   print(f"Table to CSV ... {db_name}-{table_name}")
 
   out_path=f"{os.getcwd()}/{csv_path}/"
@@ -28,6 +28,7 @@ def cmd_table_to_csv(db_name, table_name, csv_path, passwd=None, time_to_sleep=2
   command_psql = f"psql -d {db_name} -c '\copy {table_name} to {out_name} csv header'"
 
   command_os = f'su -l postgres -c "{command_psql}"'
-
+  print("Excecuting command ... ", command_os)
+  
   os.popen(command_os, 'w').write(passwd+'\n')
   time.sleep(time_to_sleep)

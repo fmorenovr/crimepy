@@ -32,15 +32,21 @@ def getDBsSize(config_file, list_dbs):
   conn = db_connection(config_file)
   conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
   cursor = conn.cursor()
+  
+  db_dict = {"db_name":[], "size": []}
 
   for db_name in list_dbs:
       query = f"select pg_size_pretty( pg_database_size('{db_name}') );"
       cursor.execute(query)
       row = cursor.fetchone()
+      db_dict["db_name"].append(db_name)
+      db_dict["size"].append(str(row[0]))
       print("db:", db_name, "size:", str(row[0]))
 
   cursor.close()
   conn.close()
+  
+  return db_dict
 
 def getTableSize(config_file, list_dbs):
   for db_name in list_dbs:
