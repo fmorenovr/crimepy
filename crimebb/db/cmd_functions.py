@@ -25,9 +25,10 @@ def cmd_table_to_csv(db_name, table_name, csv_path, passwd=None, time_to_sleep=3
   out_name=f"{out_path}{table_name}.csv"
 
   #psql -d antichat-2021-01-10 -c "\copy boards to filename.csv csv header"
-  command_psql = f"psql -d {db_name} -c '\copy {table_name} to {out_name} delimiter \'\t\' csv header;'"
+  #command_psql = f"psql -d {db_name} -c '''\copy {table_name} to {out_name} delimiter \'\t\' csv header;'''"
+  command_psql = f"\copy {table_name} to {out_name} csv header;"
 
-  command_os = f'su -l postgres -c "{command_psql}"'
+  command_os = f'su -l postgres -c \"psql -d {db_name} -c \'{command_psql}\'\"'
   print("Excecuting command ... ", command_os)
   
   os.popen(command_os, 'w').write(passwd+'\n')
