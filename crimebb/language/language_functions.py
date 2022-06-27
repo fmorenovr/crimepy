@@ -1,5 +1,6 @@
 import nltk
 
+import pycountry
 from collections import defaultdict
 from heapq import nlargest
 from nltk import wordpunct_tokenize
@@ -8,6 +9,13 @@ from nltk.probability import FreqDist
 from nltk.tokenize import word_tokenize, sent_tokenize
 from string import punctuation
 
+def classify_language(text):
+    tc = nltk.classify.textcat.TextCat()
+    guess_text = tc.guess_language(text)
+    
+    guess_language = pycountry.languages.get(alpha_3=guess_text).name
+    return guess_language
+    
 def evaluate_text(texto, language_to_eval="portuguese"):
   sentencas = sent_tokenize(texto)
   palavras = word_tokenize(texto.lower())
@@ -39,11 +47,14 @@ def _calculate_languages_ratios(text, language_to_eval=None):
     tokens = wordpunct_tokenize(text)
     words = [word.lower() for word in tokens]
 
-    if language_to_eval is not None:
-        stopwords_set = set(stopwords.words(language_to_eval))
-        words_set = set(words)
-        common_elements = words_set.intersection(stopwords_set)
-        languages_ratios[language_to_eval] = len(common_elements) # language "score"
+    if language_to_eval is not None and len(language_to_eval)>=1:
+        for language in language_to_eval:
+            stopwords_set = set(stopwords.words(language))
+            words_set = set(words)
+            common_elements = words_set.intersection(stopwords_set)
+
+            languages_ratios[language] = len(common_elements) # language "score"
+            
     else:
         # Compute per language included in nltk number of unique stopwords appearing in analyzed text
         for language in stopwords.fileids():
