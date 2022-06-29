@@ -3,42 +3,30 @@ import multidict as multidict
 import nltk
 import numpy as np
 import re
+from nltk.corpus import stopwords
 
-from wordcloud import WordCloud, STOPWORDS
+import wordcloud
+from wordcloud import WordCloud
 
-def getFrequencyDictForText(sentence, languages_to_eval=None):
+def getFrequencyDictForText(sentence, language_to_eval=None):
     fullTermsDict = multidict.MultiDict()
     tmpDict = {}
+    lang_stop = set()
     
     if language_to_eval is not None and len(language_to_eval)>=1:
-        lang_stop = set()
         for language in language_to_eval:
-            stopwords_set = set(stopwords.words(language))
-            words_set = set(words)
-            common_elements = words_set.intersection(stopwords_set)
-
-            languages_ratios[language] = len(common_elements) # language "score"
+            current_lang = set(stopwords.words(language))
+            lang_stop.union(current_lang)
             
     else:
         # Compute per language included in nltk number of unique stopwords appearing in analyzed text
         for language in stopwords.fileids():
-            stopwords_set = set(stopwords.words(language))
-            words_set = set(words)
-            common_elements = words_set.intersection(stopwords_set)
-
-            languages_ratios[language] = len(common_elements) # language "score"
-    
-    en_stop = set(nltk.corpus.stopwords.words("english"))
-    ru_stop = set(nltk.corpus.stopwords.words("russian"))
-    lang_stop = en_stop.union(ru_stop)
+            current_lang = set(stopwords.words(language))
+            lang_stop.union(current_lang)
 
     # making dict for counting frequencies
     for text in sentence.split(" "):
-        if re.match("a|the|an|the|to|in|for|of|or|by|with|is|on|that|be", text):
-            continue
-        if re.match("|".join(set(STOPWORDS)), text):
-            continue
-        if re.match("|".join(set(lang_stop)), text):
+        if re.match("|".join(set(wordcloud.STOPWORDS).union(set(lang_stop))), text):
             continue
         
         val = tmpDict.get(text, 0)
