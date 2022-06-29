@@ -24,8 +24,17 @@ def getFrequencyDictForText(sentence, language_to_eval=None):
             current_lang = set(stopwords.words(language))
             lang_stop.union(current_lang)
 
+    # carateres speciais
+    #regex = re.compile('[@_!#$%^&*()<>?/\|}{~:]')
+    # removing some characters
+    #sentence = re.sub('[@_!#$%^&*,;()<>?/\|\[\]}{~:=]', " ", sentence)
+    #sentence = sentence.replace("http", " ")
+    #sentence = sentence.replace("https", " ")
     # making dict for counting frequencies
     for text in sentence.split(" "):
+        if len(text)==0:
+            continue
+        
         if re.match("|".join(set(wordcloud.STOPWORDS).union(set(lang_stop))), text):
             continue
         
@@ -35,7 +44,7 @@ def getFrequencyDictForText(sentence, language_to_eval=None):
         fullTermsDict.add(key, tmpDict[key])
     return fullTermsDict
 
-def showWordCloud(text, mask=None, widht=1000, height=1000):
+def showWordCloud(text, mask=None, widht=1000, height=1000, figsize=(20,10)):
 
     x, y = np.ogrid[:widht, :height]
 
@@ -43,10 +52,10 @@ def showWordCloud(text, mask=None, widht=1000, height=1000):
         mask = (x - widht/2) ** 2 + (y - widht/2) ** 2 > (widht/2) ** 2
         mask = 255 * mask.astype(int)
 
-    wc = WordCloud(background_color="white", mask=mask, random_state=42)
+    wc = WordCloud(background_color="white", max_words=1000, mask=mask, random_state=42)
     wc.generate_from_frequencies(text)
 
-    fig = plt.subplots(figsize=(16,8))
+    fig = plt.subplots(figsize=figsize)
     plt.axis("off")
     plt.imshow(wc, interpolation="bilinear")
     plt.show()
