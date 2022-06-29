@@ -6,9 +6,27 @@ import re
 
 from wordcloud import WordCloud, STOPWORDS
 
-def getFrequencyDictForText(sentence):
+def getFrequencyDictForText(sentence, languages_to_eval=None):
     fullTermsDict = multidict.MultiDict()
     tmpDict = {}
+    
+    if language_to_eval is not None and len(language_to_eval)>=1:
+        lang_stop = set()
+        for language in language_to_eval:
+            stopwords_set = set(stopwords.words(language))
+            words_set = set(words)
+            common_elements = words_set.intersection(stopwords_set)
+
+            languages_ratios[language] = len(common_elements) # language "score"
+            
+    else:
+        # Compute per language included in nltk number of unique stopwords appearing in analyzed text
+        for language in stopwords.fileids():
+            stopwords_set = set(stopwords.words(language))
+            words_set = set(words)
+            common_elements = words_set.intersection(stopwords_set)
+
+            languages_ratios[language] = len(common_elements) # language "score"
     
     en_stop = set(nltk.corpus.stopwords.words("english"))
     ru_stop = set(nltk.corpus.stopwords.words("russian"))
