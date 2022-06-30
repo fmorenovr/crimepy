@@ -87,6 +87,7 @@ https://www.unknowncheats.me/forum/ | Forum      | n       | free
 
 ### References
 
+* [CVE list](https://www.cve.org/Downloads)
 * [Drive](https://drive.google.com/drive/u/0/folders/184juXWCPiQmUimj4B5B9WOe2nw812l46)  
 * Drive: [link1](https://docs.google.com/document/d/1JdDxqwocB2d0kuuBY3XbJ3Xmj7TLLPOOdMRfbnqhn9k/), [link2](https://docs.google.com/document/d/1TvyvR7oWiPNDjiAnHdGjjw1BL7p7-2GXxosz7rSL-cI/), [link3](https://docs.google.com/presentation/d/1sgviDNJydlCv9rSBgrhKBkk6mnmnkxmU_7OyQ7Kk5yY/)  
 * [CVE Detail](https://www.cvedetails.com/index.php)  
