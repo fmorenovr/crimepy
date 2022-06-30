@@ -5,6 +5,8 @@ data/csv/
 Rplots.pdf
 *.pyc
 *.zip
+*.sql
+*.csv
 
 outputs/
 .ipynb_checkpoints/
