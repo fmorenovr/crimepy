@@ -12,6 +12,7 @@ import enchant
 
 lang_dict = {"portuguese":"pt_BR",
              "deutsche": "de_DE",
+             "german": "de_DE",
              "english": "en_US",
              "russian": "ru_RU",
             }
@@ -33,11 +34,11 @@ def get_words_frequency(texto, language_to_eval="portuguese"):
 
 def get_words_ratio(freq_dict, language_to_eval="portuguese"):
     lang_d = enchant.Dict(lang_dict[language_to_eval])
-    total_ = len(freq)
+    total_ = len(freq_dict)
     relative_ = 0
     bad_words = []
     
-    for word in freq.keys():
+    for word in freq_dict.keys():
         if lang_d.check(word):
             relative_ +=1
         else:
@@ -60,6 +61,26 @@ def get_language_score(text, language_to_eval=None):
         languages_ratios[language]["bad_words"] = bad_words_lang
     
     return languages_ratios
+    
+#----------------------------------------------------------------------
+def detect_language(text, language_to_eval=None):
+    lang_freq = get_language_score(text, language_to_eval=language_to_eval)
+    ratios = {}
+    for lang in language_to_eval:
+      ratios[lang] = lang_freq[lang]["ratio"]
+    
+    return ratios
+    #most_rated_language = max(ratios, key=ratios.get)
+    #return most_rated_language
+
+def get_incorrect_words(text, language_to_eval=None):
+    lang_freq = get_language_score(text, language_to_eval=language_to_eval)
+    bad_words = {}
+    for lang in language_to_eval:
+      bad_words[lang] = lang_freq[lang]["bad_words"]
+    
+    return bad_words
+    
 
 #----------------------------------------------------------------------
 def __calculate_languages_ratios(text, language_to_eval=None):
@@ -87,9 +108,3 @@ def __calculate_languages_ratios(text, language_to_eval=None):
 
     return languages_ratios
     
-#----------------------------------------------------------------------
-def detect_language(text, language_to_eval=None):
-    ratios = _calculate_languages_ratios(text, language_to_eval=language_to_eval)
-    return ratios
-    #most_rated_language = max(ratios, key=ratios.get)
-    #return most_rated_language
