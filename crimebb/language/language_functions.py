@@ -1,47 +1,68 @@
 import nltk
-
-import pycountry
-from collections import defaultdict
-from heapq import nlargest
 from nltk import wordpunct_tokenize
-from nltk.corpus import stopwords
 from nltk.probability import FreqDist
 from nltk.tokenize import word_tokenize, sent_tokenize
-from string import punctuation
+from string import punctuation, digits
 
-def classify_language(text):
-    tc = nltk.classify.textcat.TextCat()
-    guess_text = tc.guess_language(text)
+from collections import defaultdict
+from heapq import nlargest
+
+
+import enchant
+
+lang_dict = {"portuguese":"pt_BR",
+             "deutsche": "de_DE",
+             "english": "en_US",
+             "russian": "ru_RU",
+            }
+
+def get_words_frequency(texto, language_to_eval="portuguese"):
+    #Tokenizing by characters/words
+    palavras_inside = wordpunct_tokenize(texto.lower())#, language=language_to_eval)
+
+    # Getting StopWords for the language
+    stopwords_pt = nltk.corpus.stopwords.words(language_to_eval)
+    # avoid numbers (alone) punctuations and stopwords
+    stopwords_avoid = set(stopwords_pt).union(punctuation).union(set(digits))
+    palavras_sem_stopwords = [palavra for palavra in palavras_inside if palavra not in stopwords_avoid]
+
+    # making the frequency dict
+    frequencia = FreqDist(palavras_sem_stopwords)
+
+    return frequencia
+
+def get_words_ratio(freq_dict, language_to_eval="portuguese"):
+    lang_d = enchant.Dict(lang_dict[language_to_eval])
+    total_ = len(freq)
+    relative_ = 0
+    bad_words = []
     
-    guess_language = pycountry.languages.get(alpha_3=guess_text).name
-    return guess_language
+    for word in freq.keys():
+        if lang_d.check(word):
+            relative_ +=1
+        else:
+            bad_words.append(word)
     
-def evaluate_text(texto, language_to_eval="portuguese"):
-  sentencas = sent_tokenize(texto)
-  palavras = word_tokenize(texto.lower())
+    return relative_/total_, bad_words
 
-  stopwords_pt = nltk.corpus.stopwords.words(language_to_eval)
-  stopwords = set(stopwords_pt + list(punctuation))
-  palavras_sem_stopwords = [palavra for palavra in palavras if palavra not in stopwords]
-
-  frequencia = FreqDist(palavras_sem_stopwords)
-
-  sentencas_importantes = defaultdict(int)
-
-  for i, sentenca in enumerate(sentencas):
-      for palavra in word_tokenize(sentenca.lower()):
-          if palavra in frequencia:
-              sentencas_importantes[i] += frequencia[palavra]
-
-  idx_sentencas_importantes = nlargest(4, sentencas_importantes, sentencas_importantes.get)
-
-#  for i in sorted(idx_sentencas_importantes):
-#    print(sentencas[i])
+def get_language_score(text, language_to_eval=None):
+    languages_ratios = {}
     
-  return frequencia, idx_sentencas_importantes, sentencas
+    if language_to_eval is None:
+        language_to_eval = nltk.corpus.stopwords.fileids()
+    
+    for language in language_to_eval:
+        languages_ratios[language] = {}
+        freq_lang = get_words_frequency(text, language)
+        ratio_lang, bad_words_lang = get_words_ratio(freq_lang, language)
+        
+        languages_ratios[language]["ratio"] = ratio_lang
+        languages_ratios[language]["bad_words"] = bad_words_lang
+    
+    return languages_ratios
 
 #----------------------------------------------------------------------
-def _calculate_languages_ratios(text, language_to_eval=None):
+def __calculate_languages_ratios(text, language_to_eval=None):
     languages_ratios = {}
 
     tokens = wordpunct_tokenize(text)

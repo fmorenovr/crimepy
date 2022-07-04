@@ -44,7 +44,7 @@ def getFrequencyDictForText(sentence, language_to_eval=None):
         fullTermsDict.add(key, tmpDict[key])
     return fullTermsDict
 
-def showWordCloud(text, mask=None, widht=1000, height=1000, figsize=(20,10)):
+def showWordCloud(text, mask=None, widht=1000, height=1000, figsize=(20,10), stopwords_avoid=None):
 
     x, y = np.ogrid[:widht, :height]
 
@@ -52,7 +52,14 @@ def showWordCloud(text, mask=None, widht=1000, height=1000, figsize=(20,10)):
         mask = (x - widht/2) ** 2 + (y - widht/2) ** 2 > (widht/2) ** 2
         mask = 255 * mask.astype(int)
 
-    wc = WordCloud(background_color="white", max_words=1000, mask=mask, random_state=42)
+    wc = WordCloud(min_font_size=10,  
+                   max_font_size=300, 
+                   background_color="white", 
+                   stopwords=stopwords_avoid, 
+                   max_words=1000, 
+                   mask=mask, 
+                   random_state=42)
+    
     wc.generate_from_frequencies(text)
 
     fig = plt.subplots(figsize=figsize)
