@@ -44,7 +44,10 @@ def get_words_ratio(freq_dict, language_to_eval="portuguese"):
         else:
             bad_words.append(word)
     
-    return relative_/total_, bad_words
+    try:
+        return relative_/total_, set(bad_words)
+    except:
+        return 0, set(bad_words)
 
 def get_language_score(text, language_to_eval=None):
     languages_ratios = {}
@@ -62,6 +65,16 @@ def get_language_score(text, language_to_eval=None):
     
     return languages_ratios
     
+def detect_language_and_badwords(text, language_to_eval=None):
+    lang_freq = get_language_score(text, language_to_eval=language_to_eval)
+    ratios = {}
+    bad_words = {}
+    for lang in language_to_eval:
+      ratios[lang] = lang_freq[lang]["ratio"]
+      bad_words[lang] = lang_freq[lang]["bad_words"]
+    
+    return ratios, bad_words
+    
 #----------------------------------------------------------------------
 def detect_language(text, language_to_eval=None):
     lang_freq = get_language_score(text, language_to_eval=language_to_eval)
@@ -73,7 +86,7 @@ def detect_language(text, language_to_eval=None):
     #most_rated_language = max(ratios, key=ratios.get)
     #return most_rated_language
 
-def get_incorrect_words(text, language_to_eval=None):
+def get_badwords(text, language_to_eval=None):
     lang_freq = get_language_score(text, language_to_eval=language_to_eval)
     bad_words = {}
     for lang in language_to_eval:
