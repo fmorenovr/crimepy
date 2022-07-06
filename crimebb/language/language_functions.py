@@ -19,7 +19,7 @@ lang_dict = {"portuguese":"pt_BR",
 
 def get_words_frequency(texto, language_to_eval="portuguese", keep_punct=True):
     #Tokenizing by characters/words
-    palavras_inside = wordpunct_tokenize(texto.lower()) if keep_punct else word_tokenize(texto.lower(), language=language_to_eval)
+    palavras_inside = word_tokenize(texto.lower(), language=language_to_eval) if keep_punct else wordpunct_tokenize(texto.lower())
 
     # Getting StopWords for the language
     stopwords_pt = nltk.corpus.stopwords.words(language_to_eval)
