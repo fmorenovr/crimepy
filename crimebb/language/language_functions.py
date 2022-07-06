@@ -24,7 +24,7 @@ def get_words_frequency(texto, language_to_eval="portuguese", keep_punct=True):
     # Getting StopWords for the language
     stopwords_pt = nltk.corpus.stopwords.words(language_to_eval)
     # avoid numbers (alone) punctuations and stopwords
-    stopwords_avoid = set(stopwords_pt).union(punctuation).union(set(digits))
+    stopwords_avoid = set(stopwords_pt).union(set(punctuation)).union(set(digits))
     palavras_sem_stopwords = [palavra for palavra in palavras_inside if palavra not in stopwords_avoid]
 
     # making the frequency dict
@@ -37,17 +37,19 @@ def get_words_ratio(freq_dict, language_to_eval="portuguese"):
     total_ = len(freq_dict)
     relative_ = 0
     bad_words = []
+    good_words = []
     
     for word in freq_dict.keys():
         if lang_d.check(word):
             relative_ +=1
+            good_words.append(word)
         else:
             bad_words.append(word)
     
     try:
-        return relative_/total_, set(bad_words)
-    except:
-        return 0, set(bad_words)
+        return relative_/total_, list(set(bad_words)), list(set(good_words))
+    except: # error divided by 0
+        return 0, list(set(bad_words)), list(set(good_words))
 
 def get_language_score(text, language_to_eval=None, keep_punct=True):
     languages_ratios = {}
@@ -58,10 +60,11 @@ def get_language_score(text, language_to_eval=None, keep_punct=True):
     for language in language_to_eval:
         languages_ratios[language] = {}
         freq_lang = get_words_frequency(text, language, keep_punct=keep_punct)
-        ratio_lang, bad_words_lang = get_words_ratio(freq_lang, language)
+        ratio_lang, bad_words_lang, good_words_lang = get_words_ratio(freq_lang, language)
         
         languages_ratios[language]["ratio"] = ratio_lang
         languages_ratios[language]["bad_words"] = bad_words_lang
+        languages_ratios[language]["good_words"] = good_words_lang
     
     return languages_ratios
     
