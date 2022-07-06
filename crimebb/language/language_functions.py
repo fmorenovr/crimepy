@@ -36,20 +36,20 @@ def get_words_ratio(freq_dict, language_to_eval="portuguese"):
     lang_d = enchant.Dict(lang_dict[language_to_eval])
     total_ = len(freq_dict)
     relative_ = 0
-    bad_words = []
-    good_words = []
+    incorrect_words = []
+    correct_words = []
     
     for word in freq_dict.keys():
         if lang_d.check(word):
             relative_ +=1
-            good_words.append(word)
+            correct_words.append(word)
         else:
-            bad_words.append(word)
+            incorrect_words.append(word)
     
     try:
-        return relative_/total_, list(set(bad_words)), list(set(good_words))
+        return relative_/total_, list(set(incorrect_words)), list(set(correct_words))
     except: # error divided by 0
-        return 0, list(set(bad_words)), list(set(good_words))
+        return 0, list(set(incorrect_words)), list(set(correct_words))
 
 def get_language_score(text, language_to_eval=None, keep_punct=True):
     languages_ratios = {}
@@ -60,23 +60,25 @@ def get_language_score(text, language_to_eval=None, keep_punct=True):
     for language in language_to_eval:
         languages_ratios[language] = {}
         freq_lang = get_words_frequency(text, language, keep_punct=keep_punct)
-        ratio_lang, bad_words_lang, good_words_lang = get_words_ratio(freq_lang, language)
+        ratio_lang, incorrect_words_lang, correct_words_lang = get_words_ratio(freq_lang, language)
         
         languages_ratios[language]["ratio"] = ratio_lang
-        languages_ratios[language]["bad_words"] = bad_words_lang
-        languages_ratios[language]["good_words"] = good_words_lang
+        languages_ratios[language]["incorrect_words"] = incorrect_words_lang
+        languages_ratios[language]["correct_words"] = correct_words_lang
     
     return languages_ratios
     
 def detect_language_and_badwords(text, language_to_eval=None, keep_punct=True):
     lang_freq = get_language_score(text, language_to_eval=language_to_eval, keep_punct=keep_punct)
     ratios = {}
-    bad_words = {}
+    incorrect_words = {}
+    correct_words = {}
     for lang in language_to_eval:
       ratios[lang] = lang_freq[lang]["ratio"]
-      bad_words[lang] = lang_freq[lang]["bad_words"]
+      incorrect_words[lang] = lang_freq[lang]["incorrect_words"]
+      correct_words[lang] = lang_freq[lang]["correct_words"]
     
-    return ratios, bad_words
+    return ratios, incorrect_words, correct_words
     
 #----------------------------------------------------------------------
 def detect_language(text, language_to_eval=None, keep_punct=True):
@@ -89,13 +91,21 @@ def detect_language(text, language_to_eval=None, keep_punct=True):
     #most_rated_language = max(ratios, key=ratios.get)
     #return most_rated_language
 
-def get_badwords(text, language_to_eval=None, keep_punct=True):
+def get_incorrect_words(text, language_to_eval=None, keep_punct=True):
     lang_freq = get_language_score(text, language_to_eval=language_to_eval, keep_punct=keep_punct)
-    bad_words = {}
+    incorrect_words = {}
     for lang in language_to_eval:
-      bad_words[lang] = lang_freq[lang]["bad_words"]
+      incorrect_words[lang] = lang_freq[lang]["incorrect_words"]
     
-    return bad_words
+    return incorrect_words
+
+def get_correct_words(text, language_to_eval=None, keep_punct=True):
+    lang_freq = get_language_score(text, language_to_eval=language_to_eval, keep_punct=keep_punct)
+    correct_words = {}
+    for lang in language_to_eval:
+      correct_words[lang] = lang_freq[lang]["correct_words"]
+    
+    return correct_words
     
 # NOT USED
 #----------------------------------------------------------------------
