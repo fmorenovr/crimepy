@@ -8,7 +8,7 @@ from nltk.corpus import stopwords
 import wordcloud
 from wordcloud import WordCloud
 
-def getFrequencyDictForText(sentence, language_to_eval=None):
+def get_text_frequency(sentence, language_to_eval=None):
     fullTermsDict = multidict.MultiDict()
     tmpDict = {}
     lang_stop = set()
@@ -27,7 +27,8 @@ def getFrequencyDictForText(sentence, language_to_eval=None):
     # carateres speciais
     #regex = re.compile('[@_!#$%^&*()<>?/\|}{~:]')
     # removing some characters
-    #sentence = re.sub('[@_!#$%^&*,;()<>?/\|\[\]}{~:=]', " ", sentence)
+    
+    sentence = re.sub('[\\\\\'\"+@_!#$%^&*,;().<>?/\|\[\]}{~:=\n\t]', " ", sentence)
     #sentence = sentence.replace("http", " ")
     #sentence = sentence.replace("https", " ")
     # making dict for counting frequencies
@@ -44,7 +45,7 @@ def getFrequencyDictForText(sentence, language_to_eval=None):
         fullTermsDict.add(key, tmpDict[key])
     return fullTermsDict
 
-def showWordCloud(text, mask=None, widht=1000, height=1000, figsize=(20,10), stopwords_avoid=None):
+def showWordCloud(text_dict, title, max_words=10000, mask=None, widht=1000, height=1000, figsize=(20,10), stopwords_avoid=None):
 
     x, y = np.ogrid[:widht, :height]
 
@@ -56,13 +57,14 @@ def showWordCloud(text, mask=None, widht=1000, height=1000, figsize=(20,10), sto
                    max_font_size=300, 
                    background_color="white", 
                    stopwords=stopwords_avoid, 
-                   max_words=1000, 
+                   max_words=max_words, 
                    mask=mask, 
                    random_state=42)
     
-    wc.generate_from_frequencies(text)
+    wc.generate_from_frequencies(text_dict)
 
     fig = plt.subplots(figsize=figsize)
     plt.axis("off")
+    plt.title(title)
     plt.imshow(wc, interpolation="bilinear")
     plt.show()

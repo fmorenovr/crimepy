@@ -2,7 +2,6 @@
 
 from pathlib import Path
 import json
-import os
 import glob
 
 def openFile(filename):
@@ -20,7 +19,7 @@ def get_db_names(path):
   zip_iterator = zip(files_name, files_path)
   files_dict = dict(zip_iterator)
   
-  files_path = [f"{os.getcwd()}/{file_}" for file_ in files_path]
+  files_path = [f"{Path.cwd().as_posix()}/{file_}" for file_ in files_path]
     
   return files_name, files_path, files_dict
   

@@ -1,4 +1,4 @@
-from .db import *
-from .language import *
+from .database import *
+from .language_text import *
 from .utils import *
 

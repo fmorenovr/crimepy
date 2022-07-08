@@ -4,33 +4,9 @@ from nltk.probability import FreqDist
 from nltk.tokenize import word_tokenize, sent_tokenize
 from string import punctuation, digits
 
-from collections import defaultdict
-from heapq import nlargest
-
+from .language_variables import lang_dict
 
 import enchant
-
-lang_dict = {"portuguese":"pt_BR",
-             "deutsche": "de_DE",
-             "german": "de_DE",
-             "english": "en_US",
-             "russian": "ru_RU",
-            }
-
-def get_words_frequency(texto, language_to_eval="portuguese", keep_punct=True):
-    #Tokenizing by characters/words
-    palavras_inside = word_tokenize(texto.lower(), language=language_to_eval) if keep_punct else wordpunct_tokenize(texto.lower())
-
-    # Getting StopWords for the language
-    stopwords_pt = nltk.corpus.stopwords.words(language_to_eval)
-    # avoid numbers (alone) punctuations and stopwords
-    stopwords_avoid = set(stopwords_pt).union(set(punctuation)).union(set(digits))
-    palavras_sem_stopwords = [palavra for palavra in palavras_inside if palavra not in stopwords_avoid]
-
-    # making the frequency dict
-    frequencia = FreqDist(palavras_sem_stopwords)
-
-    return frequencia
 
 def get_words_ratio(freq_dict, language_to_eval="portuguese"):
     lang_d = enchant.Dict(lang_dict[language_to_eval])
@@ -51,6 +27,26 @@ def get_words_ratio(freq_dict, language_to_eval="portuguese"):
     except: # error divided by 0
         return 0, list(set(incorrect_words)), list(set(correct_words))
 
+def get_words_frequency(texto, language_to_eval=None, keep_punct=True):
+    if language_to_eval is not None:
+        #Tokenizing by characters/words
+        palavras_inside = word_tokenize(texto.lower(), language=language_to_eval) if keep_punct else wordpunct_tokenize(texto.lower())
+
+        # Getting StopWords for the language
+        stopwords_pt = nltk.corpus.stopwords.words(language_to_eval)
+        # avoid numbers (alone) punctuations and stopwords
+        stopwords_avoid = set(stopwords_pt).union(set(punctuation)).union(set(digits))
+        palavras_sem_stopwords = [palavra for palavra in palavras_inside if palavra not in stopwords_avoid]
+
+    else:
+        palavras_inside = word_tokenize(texto.lower())
+        stopwords_avoid = set(punctuation).union(set(digits))
+        palavras_sem_stopwords = [palavra for palavra in palavras_inside if palavra not in stopwords_avoid]
+    # making the frequency dict
+    frequencia = FreqDist(palavras_sem_stopwords)
+
+    return frequencia
+
 def get_language_score(text, language_to_eval=None, keep_punct=True):
     languages_ratios = {}
     
@@ -68,7 +64,7 @@ def get_language_score(text, language_to_eval=None, keep_punct=True):
     
     return languages_ratios
     
-def detect_language_and_badwords(text, language_to_eval=None, keep_punct=True):
+def detect_language_and_words(text, language_to_eval=None, keep_punct=True):
     lang_freq = get_language_score(text, language_to_eval=language_to_eval, keep_punct=keep_punct)
     ratios = {}
     incorrect_words = {}
@@ -80,7 +76,6 @@ def detect_language_and_badwords(text, language_to_eval=None, keep_punct=True):
     
     return ratios, incorrect_words, correct_words
     
-#----------------------------------------------------------------------
 def detect_language(text, language_to_eval=None, keep_punct=True):
     lang_freq = get_language_score(text, language_to_eval=language_to_eval, keep_punct=keep_punct)
     ratios = {}
