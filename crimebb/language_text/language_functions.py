@@ -23,9 +23,9 @@ def get_words_ratio(freq_dict, language_to_eval="portuguese"):
             incorrect_words.append(word)
     
     try:
-        return relative_/total_, list(set(incorrect_words)), list(set(correct_words))
+        return relative_/total_, incorrect_words, correct_words
     except: # error divided by 0
-        return 0, list(set(incorrect_words)), list(set(correct_words))
+        return 0, incorrect_words, correct_words
 
 def get_words_frequency(texto, language_to_eval=None, keep_punct=True):
     if language_to_eval is not None:
