@@ -6,7 +6,7 @@ def cmd_db_restore(db_name, db_path, passwd=None, time_to_sleep=30):
   print(f"Backuping ... {db_name}")
   
   input_path=f"{os.getcwd()}/{db_path}/"
-  command_psql = f"psql -d {db_name} -a -f {input_path}"
+  command_psql = f"psql -d {db_name} -f {input_path}"
   
   command_os = f'su -l postgres -c "{command_psql}"' 
   
@@ -14,8 +14,9 @@ def cmd_db_restore(db_name, db_path, passwd=None, time_to_sleep=30):
   #os.system(f"psql -d {db_name} -a -f {dict_dbs[db_name]}")
   
   os.popen(command_os, 'w').write(passwd+'\n')#getpass.getpass()+'\n')
-  time.sleep(time_to_sleep)
+  print(f"RESTORED DB {db_name} FINISHED.")
   #os.system("")
+  time.sleep(time_to_sleep)
 
 def cmd_table_to_csv(db_name, table_name, csv_path, passwd=None, time_to_sleep=30):
   print(f"Table to CSV ... {db_name}-{table_name}")
@@ -32,4 +33,5 @@ def cmd_table_to_csv(db_name, table_name, csv_path, passwd=None, time_to_sleep=3
   print("Excecuting command ... ", command_os)
   
   os.popen(command_os, 'w').write(passwd+'\n')
+  print(f"DB to CSV {db_name} FINISHED.")
   time.sleep(time_to_sleep)

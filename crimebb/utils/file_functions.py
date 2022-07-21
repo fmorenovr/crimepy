@@ -3,6 +3,7 @@
 from pathlib import Path
 import json
 import glob
+import numpy as np
 
 def openFile(filename):
   with open(filename) as f:
