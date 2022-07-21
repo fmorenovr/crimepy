@@ -7,6 +7,21 @@ class CrimeBBManager():
         self.YEAR = year
         self.CSV_PATH = f"{self.DATA_PATH}csv/{self.YEAR}/summary/"
         self.CSV_PROCESSED = f"{self.DATA_PATH}csv/{self.YEAR}/processed/"
+
+    def generates(self):
+        _df = pd.merge(self.posts_df, self.website_df, how="left", on="site_id")
+        _df = pd.merge(_df, self.boards_df[["site_id", "board_id", "board_title"]].drop_duplicates(), on=["site_id", "board_id"], how="left")
+        _df = pd.merge(_df, self.threads_df[["site_id", "board_id", "thread_id", "thread_title"]].drop_duplicates(), on=["site_id", "board_id", "thread_id"], how="left")
+
+        crimebb_df = _df[['site_id', 'board_id', 'thread_id', 'user_id', 'post_id', 
+                                'site_name', 'board_title', 'thread_title', 'username', 'content', 
+                                'user_reputation', 'post_data_creation']].copy()
+        
+        crimebb_df.to_csv(f"{self.CSV_PROCESSED}crimebb_{YEAR}.csv", sep='\t', index=False)
+        
+        self.crimebb_df = crimebb_df
+        
+        return crimebb_df
     
     ### CRIMEBB 2021 VERSION
     
@@ -15,6 +30,8 @@ class CrimeBBManager():
         members_df.drop_duplicates(inplace=True)
         
         self.members_df = members_df
+        
+        return members_df
     
     def read_sites(self):
         website_df = self.boards_df[["site_id", "site_name"]].copy()
@@ -23,6 +40,8 @@ class CrimeBBManager():
         website_df.sort_values(by="site_id", inplace=True)
         
         self.website_df = website_df
+        
+        return website_df
     
     def read_boards(self):
         boards_df = pd.read_csv(f"{self.CSV_PATH}boards.csv", sep="\t", low_memory=False)
@@ -42,6 +61,8 @@ class CrimeBBManager():
         boards_df.drop_duplicates(inplace=True)
         
         self.boards_df = boards_df
+        
+        return boards_df
         
     def read_threads(self):
         threads_df = pd.read_csv(f"{self.CSV_PATH}threads.csv", sep="\t", low_memory=False)
@@ -63,18 +84,14 @@ class CrimeBBManager():
 
         self.threads_df = threads_df
         
-    def read_posts(self, chunk_size=1000000):
-        #posts_df = pd.read_csv(f"{self.CSV_PATH}posts.csv", sep="\t", low_memory=False)
-        posts_reader = pd.read_csv(f"{self.CSV_PATH}posts.csv", sep="\t", low_memory=False, iterator=True)
+        return threads_df
         
-        posts_final = pd.DataFrame()
-        
-        len_readed=chunk_size
-        while len_readed>=chunk_size:
-            posts_df = posts_reader.get_chunk(chunk_size).copy()
-            
+    def read_posts(self, read_direct=True, chunk_size=1000000):
+    
+        if read_direct:
+            posts_df = pd.read_csv(f"{self.CSV_PATH}posts.csv", sep="\t", low_memory=False)
             posts_df.drop_duplicates(inplace=True)
-
+            
             posts_df.drop(columns=["is_a_reply", "updated_on", "db_created_on", "db_updated_on", "quoted_post_ids", "creator_n_posts"], inplace=True)
             posts_df.drop_duplicates(inplace=True)
 
@@ -85,25 +102,39 @@ class CrimeBBManager():
                                      "created_on":"post_data_creation"}, inplace=True)
             posts_df.drop_duplicates(inplace=True)
 
-            posts_df = posts_df[["post_id", "site_id", "board_id", "thread_id", "user_id", "username", "user_reputation", "content", "post_data_creation"]].copy()
-            posts_df.drop_duplicates(inplace=True)
+            posts_final = posts_df[["post_id", "site_id", "board_id", "thread_id", "user_id", "username", "user_reputation", "content", "post_data_creation"]].copy()
+            posts_final.drop_duplicates(inplace=True)
         
-            posts_final = pd.concat([posts_final, posts_df], ignore_index=True)
-        
-            len_readed = posts_df.shape[0]
-        
-        self.posts_df = posts_final    
+        else:
+            posts_reader = pd.read_csv(f"{self.CSV_PATH}posts.csv", sep="\t", low_memory=False, iterator=True)
+            
+            posts_final = pd.DataFrame()
+            
+            len_readed=chunk_size
+            while len_readed>=chunk_size:
+                posts_df = posts_reader.get_chunk(chunk_size).copy()
+                posts_df.drop_duplicates(inplace=True)
 
-    def generates(self):
-        _df = pd.merge(self.posts_df, self.website_df, how="left", on="site_id")
-        _df = pd.merge(_df, self.boards_df[["site_id", "board_id", "board_title"]].drop_duplicates(), on=["site_id", "board_id"], how="left")
-        _df = pd.merge(_df, self.threads_df[["site_id", "board_id", "thread_id", "thread_title"]].drop_duplicates(), on=["site_id", "board_id", "thread_id"], how="left")
+                posts_df.drop(columns=["is_a_reply", "updated_on", "db_created_on", "db_updated_on", "quoted_post_ids", "creator_n_posts"], inplace=True)
+                posts_df.drop_duplicates(inplace=True)
+
+                posts_df.rename(columns={"creator":"username", 
+                                         "id":"post_id", 
+                                         "creator_id":"user_id", 
+                                         "creator_reputation":"user_reputation", 
+                                         "created_on":"post_data_creation"}, inplace=True)
+                posts_df.drop_duplicates(inplace=True)
+
+                posts_df = posts_df[["post_id", "site_id", "board_id", "thread_id", "user_id", "username", "user_reputation", "content", "post_data_creation"]].copy()
+                posts_df.drop_duplicates(inplace=True)
+            
+                posts_final = pd.concat([posts_final, posts_df], ignore_index=True)
+            
+                len_readed = posts_df.shape[0]
         
-        self.crimebb_df = _df[['site_id', 'board_id', 'thread_id', 'user_id', 'post_id', 
-                               'site_name', 'board_title', 'thread_title', 'username', 'content', 
-                               'user_num_posts', 'user_reputation', 'post_data_creation']].copy()
+        self.posts_df = posts_final
         
-        self.crimebb_df.to_csv(f"{self.CSV_PROCESSED}crimebb_{YEAR}.csv", sep='\t', index=False)
+        return  posts_final
         
 
     ### CRIMEBB 2019 VERSION
@@ -121,6 +152,8 @@ class CrimeBBManager():
         website_df.sort_values(by="site_id", inplace=True)
         
         self.website_df = website_df
+        
+        return website_df
         
     def read_boards_2019(self):
         boards_df = pd.read_csv(f"{self.CSV_PATH}boards.csv", sep="\t", low_memory=False)
@@ -140,6 +173,8 @@ class CrimeBBManager():
         boards_df.drop_duplicates(inplace=True)
         
         self.boards_df = boards_df
+        
+        return boards_df
         
     def read_threads_2019(self):
         threads_df = pd.read_csv(f"{self.CSV_PATH}threads.csv", sep="\t", low_memory=False)
@@ -161,6 +196,8 @@ class CrimeBBManager():
         threads_df.drop_duplicates(inplace=True)
         
         self.threads_df = threads_df
+        
+        return threads_df
         
     def read_posts_2019(self, chunk_size=1000000):
         #posts_df = pd.read_csv(f"{self.CSV_PATH}posts.csv", sep="\t", low_memory=False)
@@ -198,3 +235,4 @@ class CrimeBBManager():
         
         self.posts_df = posts_final
         
+        return posts_final
