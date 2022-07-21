@@ -75,7 +75,7 @@ class CrimeBBManager():
             
             posts_df.drop_duplicates(inplace=True)
 
-            posts_df.drop(columns=["is_a_reply", "updated_on", "db_created_on", "db_updated_on", "CitedPost"], inplace=True)
+            posts_df.drop(columns=["is_a_reply", "updated_on", "db_created_on", "db_updated_on", "quoted_post_ids"], inplace=True)
             posts_df.drop_duplicates(inplace=True)
 
             posts_df.rename(columns={"creator":"username", 
