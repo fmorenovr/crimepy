@@ -75,18 +75,17 @@ class CrimeBBManager():
             
             posts_df.drop_duplicates(inplace=True)
 
-            posts_df.drop(columns=["is_a_reply", "updated_on", "db_created_on", "db_updated_on", "quoted_post_ids"], inplace=True)
+            posts_df.drop(columns=["is_a_reply", "updated_on", "db_created_on", "db_updated_on", "quoted_post_ids", "creator_n_posts"], inplace=True)
             posts_df.drop_duplicates(inplace=True)
 
             posts_df.rename(columns={"creator":"username", 
                                      "id":"post_id", 
                                      "creator_id":"user_id", 
-                                     "creator_n_posts":"user_num_posts", 
                                      "creator_reputation":"user_reputation", 
                                      "created_on":"post_data_creation"}, inplace=True)
             posts_df.drop_duplicates(inplace=True)
 
-            posts_df = posts_df[["post_id", "site_id", "board_id", "thread_id", "user_id", "username", "user_num_posts", "user_reputation", "content", "post_data_creation"]].copy()
+            posts_df = posts_df[["post_id", "site_id", "board_id", "thread_id", "user_id", "username", "user_reputation", "content", "post_data_creation"]].copy()
             posts_df.drop_duplicates(inplace=True)
         
             posts_final = pd.concat([posts_final, posts_df], ignore_index=True)
@@ -174,7 +173,7 @@ class CrimeBBManager():
             posts_df = posts_reader.get_chunk(chunk_size).copy()
             posts_df.drop_duplicates(inplace=True)
 
-            posts_df.drop(columns=["Likes", "parsed", "LastParse", "CitedPost"], inplace=True)
+            posts_df.drop(columns=["Likes", "parsed", "LastParse", "CitedPost", "AuthorNumPosts"], inplace=True)
             posts_df.drop_duplicates(inplace=True)
 
             posts_df.rename(columns={"IdPost": "post_id", 
@@ -182,7 +181,6 @@ class CrimeBBManager():
                                      "thread":"thread_id", 
                                      "Timestamp":"post_data_creation", 
                                      "Content":"content", "site":"site_id", 
-                                     "AuthorNumPosts":"user_num_posts", 
                                      "AuthorReputation":"user_reputation", 
                                      "site":"site_id", 
                                      "AuthorName":"username"}, inplace=True)
@@ -191,7 +189,7 @@ class CrimeBBManager():
             posts_df = pd.merge(posts_df, self.threads_df[["site_id", "board_id", "thread_id"]], how="left", on=["site_id", "thread_id"])
             posts_df.drop_duplicates(inplace=True)
 
-            posts_df = posts_df[["post_id", "site_id", "board_id", "thread_id", "user_id", "username", "user_num_posts", "user_reputation", "content", "post_data_creation"]].copy()
+            posts_df = posts_df[["post_id", "site_id", "board_id", "thread_id", "user_id", "username", "user_reputation", "content", "post_data_creation"]].copy()
             posts_df.drop_duplicates(inplace=True)
         
             posts_final = pd.concat([posts_final, posts_df], ignore_index=True)
