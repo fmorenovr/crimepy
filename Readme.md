@@ -50,12 +50,22 @@ Open jupyter notebook and start running all `.ipynb` files (in order) inside the
 * [CVE list](https://www.cve.org/Downloads)
 * [Drive](https://drive.google.com/drive/u/0/folders/184juXWCPiQmUimj4B5B9WOe2nw812l46)  
 * Drive: [link1](https://docs.google.com/document/d/1JdDxqwocB2d0kuuBY3XbJ3Xmj7TLLPOOdMRfbnqhn9k/), [link2](https://docs.google.com/document/d/1TvyvR7oWiPNDjiAnHdGjjw1BL7p7-2GXxosz7rSL-cI/), [link3](https://docs.google.com/presentation/d/1sgviDNJydlCv9rSBgrhKBkk6mnmnkxmU_7OyQ7Kk5yY/)  
-* [CVE Detail](https://www.cvedetails.com/index.php)  
+
 * [Some attacks](https://gist.github.com/v1m/10d7b7b05e90c7dae29f)  
-* [Git-vuln-finder](https://github.com/cve-search/git-vuln-finder)  
+
 * [Vulns](https://github.com/hannob/vulns)  
+
 * [CVE](https://en.wikipedia.org/wiki/Common_Vulnerabilities_and_Exposures)  
+
 * [data](https://nvd.nist.gov/vuln/data-feeds#JSON_FEED)  
+
+### CVE Information
+
+* [Git-vuln-finder](https://github.com/cve-search/git-vuln-finder)  
+* [CVE ORG](https://www.cve.org/CVERecord?id=CVE-2021-44228)  
+* [NVD](https://nvd.nist.gov/vuln/detail/CVE-2021-44228)  
+* [CVE Details](https://www.cvedetails.com/cve/CVE-2021-44228)  
+* [Exploit DB](https://www.exploit-db.com/search?cve=CVE-2021-44228)  
 
 ### CyberCrime Forums List
 

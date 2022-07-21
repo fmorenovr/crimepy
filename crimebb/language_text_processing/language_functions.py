@@ -70,11 +70,15 @@ def detect_language_and_words(text, language_to_eval=None, keep_punct=True):
     incorrect_words = {}
     correct_words = {}
     for lang in language_to_eval:
-      ratios[lang] = lang_freq[lang]["ratio"]
-      incorrect_words[lang] = lang_freq[lang]["incorrect_words"]
-      correct_words[lang] = lang_freq[lang]["correct_words"]
+        ratios[lang] = lang_freq[lang]["ratio"]
+        incorrect_words[lang] = lang_freq[lang]["incorrect_words"]
+        correct_words[lang] = lang_freq[lang]["correct_words"]
     
-    return ratios, incorrect_words, correct_words
+    language_detected = max(ratios, key=ratios.get)
+    incorrect_words_list = list(incorrect_words[language_detected])
+    correct_words_list = list(correct_words[language_detected])
+    
+    return ratios, language_detected, incorrect_words_list, correct_words_list
     
 def detect_language(text, language_to_eval=None, keep_punct=True):
     lang_freq = get_language_score(text, language_to_eval=language_to_eval, keep_punct=keep_punct)

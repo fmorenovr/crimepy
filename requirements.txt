@@ -1,0 +1,5 @@
+pyenchant
+nltk
+wordcloud
+pycountry
+multidict
