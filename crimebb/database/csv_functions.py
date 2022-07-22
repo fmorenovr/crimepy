@@ -9,7 +9,7 @@ def convert_to_gb(row):
         return row["num_size"]*1000000
 
 
-def pdCSVdb(db_dict, year_studied="2021"):
+def plot_db_sizes(db_dict, year_studied="2021"):
     db_df = pd.DataFrame(data=db_dict)
     db_df["num_size"] = db_df["size"].apply(lambda x: int(x.split(" ")[0]))
     db_df["str_size"] = db_df["size"].apply(lambda x: x.split(" ")[1])
