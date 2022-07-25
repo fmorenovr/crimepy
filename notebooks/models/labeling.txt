@@ -1,0 +1,52 @@
+
+To analyse the discussions of vulnerabilities in Hackforums, we filter from the dataset what we call special threads. 
+These threads contain 1 or more posts citing vulnerabilities. By reading the discussions of each of these threads,
+ we classify them according to their danger level. We define the following 3 classes in ascending order of threat level:
+
+1) PoC:  
+      The proof of concept class represents the threads that refer to vulnerabilities in a non-threatful way.
+      In general, discussions that don't show signs of future exploitation, or talks about exploiting in a controlled environment,
+       are considered to be PoC. Thus, this class represents the less dangerous threads.
+
+       keywords:
+      - has word trillium
+      - has word PoC or poc,etc
+      - tutorial
+      - penetration test
+      - guide
+
+2) Weaponization:
+      Weaponization label is assigned to threads that show promising discussions for exploiting a vulnerability. Thus,
+      the weaponization class represents discussions that can lead to an exploitation but are not there yet. 
+      In some weaponization threads, the users are very close to succeed in hacking, but something in the code doesn't work,
+       so they share their code asking for help. In others, users initiate threads offering money for exploits
+        for specific vulnerabilities, but the messages exchanged doesn't indicate that the exploits were bought or were functional. 
+        Colloquially, we can think of this class as the "almost there" threads.
+
+      keywords: 
+      - fud*
+      - money, price, bitcoin
+      - sell, trade
+      - buy
+      - packs
+      - metasploit
+      - sharing of code of someone trying to hack
+
+      Fud kits or exploits are considered to be weaponization
+
+3) Exploitation: 
+      While in weaponization threads there is no conclusion of exploits being used, exploitation threads are assertive regarding 
+      the exploitation available in the wild for cited vulnerabilities. In these threads we see confirmed trades and exploitations
+      by Hackforums' members. We envision that our model will have a higher precision for classification of threads of this class.
+      - Sell confirmed or buy confirmed
+
+
+4) Help: - 'need help', 'trying to', etc
+
+5) Others
+
+To clarify: 
+    - is 'code' a keyword too?
+    - If someone is citing an exploit from ExploitDB or NVD just showing vulnerabilities of some system, can we say it is a PoC?
+    - how to treat the help threads?
+
