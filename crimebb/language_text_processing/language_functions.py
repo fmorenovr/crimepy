@@ -3,6 +3,7 @@ from nltk import wordpunct_tokenize
 from nltk.probability import FreqDist
 from nltk.tokenize import word_tokenize, sent_tokenize
 from string import punctuation, digits
+import multidict as multidict
 
 from .language_variables import lang_dict
 
@@ -46,6 +47,43 @@ def get_words_frequency(texto, language_to_eval=None, keep_punct=True):
     frequencia = FreqDist(palavras_sem_stopwords)
 
     return frequencia
+
+def get_text_frequency(sentence, language_to_eval=None):
+    fullTermsDict = multidict.MultiDict()
+    tmpDict = {}
+    lang_stop = set()
+    
+    if language_to_eval is not None and len(language_to_eval)>=1:
+        for language in language_to_eval:
+            current_lang = set(stopwords.words(language))
+            lang_stop.union(current_lang)
+            
+    else:
+        # Compute per language included in nltk number of unique stopwords appearing in analyzed text
+        for language in stopwords.fileids():
+            current_lang = set(stopwords.words(language))
+            lang_stop.union(current_lang)
+
+    # carateres speciais
+    #regex = re.compile('[@_!#$%^&*()<>?/\|}{~:]')
+    # removing some characters
+    
+    sentence = re.sub('[\\\\\'\"+@_!#$%^&*,;().<>?/\|\[\]}{~:=\n\t]', " ", sentence)
+    #sentence = sentence.replace("http", " ")
+    #sentence = sentence.replace("https", " ")
+    # making dict for counting frequencies
+    for text in sentence.split(" "):
+        if len(text)==0:
+            continue
+        
+        #if re.match("|".join(set(wordcloud.STOPWORDS).union(set(lang_stop))), text):
+        #    continue
+        
+        val = tmpDict.get(text, 0)
+        tmpDict[text.lower()] = val + 1
+    for key in tmpDict:
+        fullTermsDict.add(key, tmpDict[key])
+    return fullTermsDict
 
 def get_language_score(text, language_to_eval=None, keep_punct=True):
     languages_ratios = {}
